@@ -1,8 +1,13 @@
 package src
 
 import (
+	"fmt"
 	"go-redis/config"
+	"go-redis/src/delivery"
 	"go-redis/src/helper/validator"
+	"go-redis/src/repository"
+	"go-redis/src/service"
+	"log"
 	"net/http"
 
 	validatorEngine "github.com/go-playground/validator"
@@ -48,4 +53,14 @@ func (s *server) Run() {
 		})
 	})
 
+	dataRepository := repository.NewPostRepository(s.cfg)
+	dataService := service.NewDataService(dataRepository)
+	dataDelivery := delivery.NewDataDelivery(dataService)
+	dataGroup := s.httpServer.Group("/data")
+	dataDelivery.Mount(dataGroup)
+
+	err := s.httpServer.Start(fmt.Sprintf(":%d", s.cfg.ServicePort()));
+	if err != nil {
+		log.Panic(err)
+	}
 }
