@@ -1,0 +1,20 @@
+# specify version for docker-compose.yml
+version: '3.8'
+
+# generate the services needed(redis)
+services:
+  redis:
+    container_name: "redis"
+    image: redis:alpine
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass root
+    ports:
+      - "6379:6379"
+    volumes:
+      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+
+  go:
+    container_name: "go-redis"
+    build:
+      context: .
+    ports:
+      - "8080:8080"

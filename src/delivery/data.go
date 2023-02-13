@@ -12,7 +12,7 @@ type dataDelivery struct {
 	dataService model.DataService
 }
 
-type DataDelivery interface{
+type DataDelivery interface {
 	Mount(group *echo.Group)
 }
 
@@ -21,8 +21,8 @@ func NewDataDelivery(dataService model.DataService) DataDelivery {
 }
 
 func (d *dataDelivery) Mount(group *echo.Group) {
-	group.GET("", d.FetchHandler)
-	group.POST("", d.FetchHandler)
+	group.GET("/fetch", d.FetchHandler)
+	group.POST("/store", d.FetchHandler)
 }
 
 func (d *dataDelivery) FetchHandler(c echo.Context) error {
@@ -30,7 +30,7 @@ func (d *dataDelivery) FetchHandler(c echo.Context) error {
 
 	key := c.QueryParam("key")
 
-	data ,err := d.dataService.GetData(ctx, key)
+	data, err := d.dataService.GetData(ctx, key)
 	if err != nil {
 		return err
 	}
